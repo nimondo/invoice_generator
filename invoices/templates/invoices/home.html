@@ -1,0 +1,10 @@
+{% extends 'invoices/base.html' %}
+
+{% block title %}Home - Invoice Management System{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Welcome to the Invoice Management System</h1>
+<p>This project is designed to help you manage clients, products, and generate invoices efficiently.</p>
+<p>Use the link below to create a new client and start generating invoices:</p>
+<a href="{% url 'create_client' %}" class="btn btn-primary">Create a New Client</a>
+{% endblock %}

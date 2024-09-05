@@ -1,8 +1,34 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from .models import Client, Product
+from .forms import ClientForm
+
+
+def home(request):
+    return render(request, 'invoices/home.html')
+
+def create_client(request):
+    if request.method == 'POST':
+        form = ClientForm(request.POST)
+        if form.is_valid():
+            client = form.save()
+            return redirect('invoice_form', client_id=client.id)  # Redirect to the invoice form with the new client ID
+    else:
+        form = ClientForm()
+
+    return render(request, 'invoices/create_client.html', {'form': form})
+
+def invoice_form(request, client_id=None):
+    clients = Client.objects.all()
+    selected_client = Client.objects.get(id=client_id) if client_id else clients.first()
+    products = Product.objects.all()
+    return render(request, 'invoices/generate_invoice.html', {
+        'clients': clients,
+        'selected_client': selected_client,
+        'products': products
+    })
 
 def generate_invoice(request, client_id):
     client = Client.objects.get(id=client_id)
@@ -38,5 +64,10 @@ def generate_invoice(request, client_id):
 
 def invoice_form(request):
     clients = Client.objects.all()
+    selected_client = clients.first() 
     products = Product.objects.all()
-    return render(request, 'invoices/generate_invoice.html', {'clients': clients, 'products': products})
+    return render(request, 'invoices/generate_invoice.html', {
+        'clients': clients,
+        'selected_client': selected_client,
+        'products': products
+    })
