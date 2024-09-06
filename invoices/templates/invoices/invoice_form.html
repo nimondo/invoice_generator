@@ -1,0 +1,49 @@
+{% extends 'invoices/base.html' %}
+
+{% block title %}Generate Invoice - Invoice Management System{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Generate Invoice for {{ selected_client.first_name }} {{ selected_client.last_name }}</h1>
+
+<form action="{% url 'invoice_form' client_id=selected_client.id %}" method="post">
+    {% csrf_token %}
+
+    <h3>Add Existing Products to Invoice</h3>
+    <div class="formset">
+        {{ formset.management_form }}
+        {% for form in formset %}
+        <div class="form-group">
+            <label for="product">Product:</label>
+            {{ form.product }}
+            <label for="quantity">Quantity:</label>
+            {{ form.quantity }}
+        </div>
+        {% if form.instance.pk %}
+        <div>
+            <label for="DELETE">Delete:</label>
+            {{ form.DELETE }}
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+
+    <button type="submit" class="btn btn-primary">Generate Invoice</button>
+</form>
+
+<h3 class="mt-5">Or Create a New Category</h3>
+<form action="{% url 'invoice_form' client_id=selected_client.id %}" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="add_category" value="true"> <!-- Flag to identify this form -->
+    {{ category_form.as_p }}
+    <button type="submit" class="btn btn-secondary">Add Category</button>
+</form>
+
+<h3 class="mt-5">Or Create a New Product</h3>
+<form action="{% url 'invoice_form' client_id=selected_client.id %}" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="add_product" value="true"> <!-- Flag to identify this form -->
+    {{ product_form.as_p }}
+    <button type="submit" class="btn btn-secondary">Add Product</button>
+</form>
+
+{% endblock %}
