@@ -6,7 +6,7 @@ from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
 from reportlab.lib.units import inch
-from .models import Client, Product, Invoice, InvoiceItem
+from .models import Client, Product, Invoice, InvoiceItem, Category
 from .forms import ClientForm, InvoiceItemFormSet, ProductForm, CategoryForm
 
 
@@ -147,3 +147,16 @@ def generate_invoice(request, client_id):
     # Build the PDF
     doc.build(elements)
     return response
+
+# from django.shortcuts import render
+# from .models import Client, Product, Invoice, Category, User
+# 'users_count': User.objects.count(),
+def dashboard(request):
+    context = {
+        'categories_count': Category.objects.count(),
+        'products_count': Product.objects.count(),
+        'invoices_count': Invoice.objects.count(),
+        'clients_count': Client.objects.count(),
+        'users_count': 3,
+    }
+    return render(request, 'invoices/dashboard.html', context)
